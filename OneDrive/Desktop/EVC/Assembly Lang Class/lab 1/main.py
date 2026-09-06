@@ -1,5 +1,10 @@
 """
-This is a program that converts binary or decimal into decimal, octal, or hex
+This is a program that converts binary or decimal into decimal, octal, or hex.
+
+Team Members: 
+- Melissa Castaneda
+- David
+- Frank
 """
 
 
@@ -58,3 +63,132 @@ while main.inputValChecker(numValStr, userInput) == False:
 
 # saves the inputs, ready for conversion
 preset = main(num=numValStr, conversion=userInput)
+
+"""
+Decimal conversion code below.
+"""
+
+# turns one decimal character into a number
+def digitValue(c):
+    digits = '0123456789'
+
+    for i in range(10):
+        if c == digits[i]:
+            return i
+
+
+# turns a decimal string into a whole number
+def decimalWhole(numStr):
+    number = 0
+
+    for c in numStr:
+        number = number * 10 + digitValue(c)
+
+    return number
+
+
+# converts the whole number using division
+def convertWhole(numStr, base):
+    digits = '0123456789ABCDEF'
+
+    if numStr == '':
+        return '0'
+
+    number = decimalWhole(numStr)
+
+    if number == 0:
+        return '0'
+
+    answer = ''
+
+    while number > 0:
+        remainder = number % base
+        answer = digits[remainder] + answer
+        number = number // base
+
+    return answer
+
+
+# converts the decimal fraction using multiplication
+def convertFraction(numStr, base, places):
+    digits = '0123456789ABCDEF'
+
+    numerator = 0
+    denominator = 1
+
+    # makes the decimal into a fraction
+    for c in numStr:
+        numerator = numerator * 10 + digitValue(c)
+        denominator = denominator * 10
+
+    answer = ''
+
+    # multiplication method
+    for i in range(places):
+        numerator = numerator * base
+
+        digit = numerator // denominator
+        numerator = numerator % denominator
+
+        answer += digits[digit]
+
+    return answer
+
+
+# converts decimal to another base
+def decimalToBase(numStr, base, places):
+    wholePart = ''
+    fractionPart = ''
+    foundDot = False
+
+    # separates whole and fraction
+    for c in numStr:
+
+        if c == '.':
+            foundDot = True
+
+        elif foundDot == False:
+            wholePart += c
+
+        else:
+            fractionPart += c
+
+    wholeAnswer = convertWhole(wholePart, base)
+
+    fractionAnswer = convertFraction(
+        fractionPart,
+        base,
+        places
+    )
+
+    return wholeAnswer + '.' + fractionAnswer
+
+
+# only runs this part for decimal input
+if preset.conversion == 'Decimal':
+
+    # 16 binary digits after point
+    binaryAnswer = decimalToBase(
+        preset.num,
+        2,
+        16
+    )
+
+    # 6 octal digits after point
+    octalAnswer = decimalToBase(
+        preset.num,
+        8,
+        6
+    )
+
+    # 4 hexadecimal digits after point
+    hexAnswer = decimalToBase(
+        preset.num,
+        16,
+        4
+    )
+
+    print('\nDecimal:', preset.num)
+    print('Binary:', binaryAnswer)
+    print('Octal:', octalAnswer)
+    print('Hexadecimal:', hexAnswer)
